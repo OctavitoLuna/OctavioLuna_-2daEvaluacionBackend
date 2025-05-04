@@ -3,12 +3,13 @@ const User = require('../models/User');
 
 // Middleware para verificar si el token es válido
 const verifyToken = (req, res, next) => {
-  const token = req.headers['authorization']?.split(' ')[1];  // Obtener el token del header Authorization
+  const token = req.headers['authorization']?.split(' ')[1];  // El token debe ir precedido de "Bearer "
 
   if (!token) {
     return res.status(403).json({ mensaje: 'Token requerido' });
   }
 
+  // Verificar que el token sea válido
   jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
     if (err) {
       return res.status(401).json({ mensaje: 'Token inválido' });
@@ -20,6 +21,7 @@ const verifyToken = (req, res, next) => {
 
 // Middleware para verificar si el usuario es admin
 const isAdmin = (req, res, next) => {
+  // Aseguramos que el usuario decodificado tenga rol de admin
   if (req.user.rol !== 'admin') {
     return res.status(403).json({ mensaje: 'Solo administradores pueden realizar esta acción' });
   }
